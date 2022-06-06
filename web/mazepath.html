@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/js/mazepath.js"></script>
+  </head>
+  <body>
+
+    <canvas id="canvas" width="80" height="80"></canvas>
+
+    <div><p id="Result"></p></div>
+
+    <script>
+      // Read maze data
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = '/static/maze.png';
+      const canvas = document.getElementById('canvas');
+      const mazeWidth = 20;    // WARN: must match ROW in mazepath.js
+      const mazeHeight = 20;   // "
+      let mazeCell = 4;
+      const mag = 4;  // magnification factor
+      mazeCell = mazeCell * mag;
+      const imgWidth = mazeWidth * mazeCell;
+      const imgHeight = mazeHeight * mazeCell;
+      const size = imgHeight * imgWidth;
+
+      // set size of canvas
+      canvas.width = imgWidth;
+      canvas.height = imgHeight;
+      const ctx = canvas.getContext('2d');
+      
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+        //img.style.display = 'none';
+        Process();
+      };
+      
+      function Process() {
+        const data = [];
+        const dataimg = ctx.getImageData( 0, 0, imgWidth, imgHeight);
+         for ( let i = 0; i < size; i++ ) {          const R = dataimg.data[4*i];
+          const G = dataimg.data[4*i+1];
+          const B = dataimg.data[4*i+2];
+          const Gray = (R+G+B) / 3;
+          
+          if ( Gray > 128 )
+            data.push(0);
+          else
+            data.push(1);
+        }
+  
+        // downsample to obtain final mat
+        let mat = Array.from(Array(mazeHeight), () => new Array(mazeWidth));
+        for (let y=0; y < mazeHeight; y += 1 ) {
+          for (let x=0; x < mazeWidth; x += 1) {
+            const ind = x*mazeCell + y*imgWidth*mazeCell;
+            mat[y][x] = data[ind];
+          }
+        }
+        //console.log(mat);
+        
+        // Find path
+        let source = [0,19];
+        let dest = [19, 0];
+
+        let mat2 = deepCopy(mat);
+        let path = findWay(mat2, source, dest)
+        if (path!=-1)
+          console.log("Shortest Path is", path,"</br>");
+        else {
+          document.getElementById("Result").innerHTML = "Path doesn't exist.";
+        }
+  
+        // Draw path
+        PaintCell(source[0], source[1], mazeCell, 'red');
+        PaintCell(dest[0], dest[1], mazeCell, 'red');
+        for (let i=1; i<path.length-1; i++) {
+          const x = path[i][0];
+          const y = path[i][1];
+          document.getElementById("Result").innerHTML += `<br/>${x} , ${y}`;
+          PaintCell(x, y, mazeCell, 'green');
+        }
+
+        // Paint a cell on image
+        function PaintCell(x, y, mazeCell, col="red") {
+          ctx.beginPath();
+          ctx.rect(x*mazeCell+1, y*mazeCell+1, mazeCell-2, mazeCell-2);
+          ctx.fillStyle = col;
+          ctx.fill();
+          ctx.lineWidth = 0;
+          ctx.strokeStyle = 'black';
+          ctx.stroke();
+        }
+      }
+      
+    </script>
+  </body>
+</html>

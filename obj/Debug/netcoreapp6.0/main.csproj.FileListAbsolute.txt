@@ -1,0 +1,5 @@
+/home/runner/Mazer/obj/Debug/netcoreapp6.0/main.csproj.AssemblyReference.cache
+/home/runner/Mazer/obj/Debug/netcoreapp6.0/main.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/Mazer/obj/Debug/netcoreapp6.0/main.AssemblyInfoInputs.cache
+/home/runner/Mazer/obj/Debug/netcoreapp6.0/main.AssemblyInfo.cs
+/home/runner/Mazer/obj/Debug/netcoreapp6.0/main.csproj.CoreCompileInputs.cache
