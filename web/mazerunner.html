@@ -74,8 +74,9 @@
 			import { PointerLockControls } from '/jsm/controls/PointerLockControls.js';
       import { GUI } from '/jsm/libs/lil-gui.module.min.js';
 		  import { GLTFLoader } from '/jsm/loaders/GLTFLoader.js';
+      import { Sky } from '/jsm/objects/Sky.js';
 
-			let camera, scene, renderer, controls, clock;
+			let camera, scene, renderer, controls, clock, sky;
       let stats, model,face, gui, mixer, actions, activeAction, previousAction;
 	  	const api = { state: 'Idle' };
 
@@ -97,6 +98,32 @@
 
       // THe path in maze
       let Path;
+      // Tablo list
+      let TabloPos;
+      const Tablos = [
+        '/static/tablo/tablo_arzihal.png',
+        '/static/tablo/tablo_basubadelmevt.png',
+        '/static/tablo/tablo_cennetmekan.png',
+        '/static/tablo/tablo_cihannuma.png',
+        '/static/tablo/tablo_cihansumul.png',
+        '/static/tablo/tablo_ehven.png',
+        '/static/tablo/tablo_ferahnak.png',
+        '/static/tablo/tablo_fevkalbeser.png',
+        '/static/tablo/tablo_hayalperest.png',
+        '/static/tablo/tablo_muskulpesent.png',
+        '/static/tablo/tablo_seb.png',
+        '/static/tablo/tablo_sidret.png',
+        '/static/tablo/tablo_hasbelkader.png',
+        '/static/tablo/tablo_kalendermesrep.png',
+        '/static/tablo/tablo_hissikablelvuku.png',
+        '/static/tablo/tablo_bilmukabele.png',
+        '/static/tablo/tablo_kadirsinas.png',
+        '/static/tablo/tablo_dertmend.png',
+        '/static/tablo/tablo_hemdert.png',
+        '/static/tablo/tablo_minnettar.png',
+        '/static/tablo/tablo_ilanihaye',
+        '/static/tablo/tablo_bibaht.png'
+      ]
       
       // clock counter
       let counter = 0;
@@ -157,8 +184,13 @@
             else
               data[i] = 0;
           }
-          Path = planPath(data, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
+
+          // Maze stuff
+          const mat = mazeMap(data, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
+          Path = planPath(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
           console.log(Path);
+          TabloPos = tabloPositions(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, 10);
+          // Start graphics world
           init();
           animate();
         },
@@ -173,13 +205,21 @@
 			function init() {
         clock = new THREE.Clock();
 
+        // Camera
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
         camera.position.y = 10;
-      
+
+        // Scene
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xffffff );
 				scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
 
+        // Sky
+        sky = new Sky();
+				sky.scale.setScalar( 450000 );
+				scene.add( sky );
+        
+        // Lights
 				const light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
 				light.position.set( 0.5, 1, 0.75 );
 				scene.add( light );
@@ -333,15 +373,25 @@
 				}
 
         // Tablolar as hints
-        let box1 = new THREE.BoxGeometry( 20, 20, 1);
-        box1.rotateY( Math.PI / 6 );
-        let text1 = new THREE.TextureLoader().load( "/static/tablo_muskulpesent.png" );
-        var mat1 = new THREE.MeshBasicMaterial( {map: text1} );
-        var tablo1 = new THREE.Mesh( box1, mat1 );
-        tablo1.position.x = -80;
-        tablo1.position.y = 5;
-        tablo1.position.z = 20;
-        //scene.add(tablo1);
+        for (let t=0; t<TabloPos.length; t++) {
+          let box1 = new THREE.BoxGeometry( 15, 10, 1);
+          //box1.rotateY( - Math.PI / 2 );
+          let text1 = new THREE.TextureLoader().load( Tablos[t] );
+          let mat1 = new THREE.MeshBasicMaterial( {map: text1} );
+          let tablo1 = new THREE.Mesh( box1, mat1 );
+          const x1 = TabloPos[t][0]*mazeCell*mazeView;
+          const z1 = TabloPos[t][1]*mazeCell*mazeView;
+          const x2 = TabloPos[t][2]*mazeCell*mazeView;
+          const z2 = TabloPos[t][3]*mazeCell*mazeView;
+          // place with an extrusion
+          tablo1.position.x = x1 + Math.floor((x2-x1)/2);
+          tablo1.position.y = 50;
+          tablo1.position.z = z1 + Math.floor((z2-z1)/2);
+          tablo1.lookAt( x2, 10, z2 );
+          console.log(tablo1.position.x, tablo1.position.z, x1, z1, x2, z2);
+          scene.add(tablo1);
+        }
+        console.log(TabloPos);
 
         // Place target at path's end
         if (Path != 1) {

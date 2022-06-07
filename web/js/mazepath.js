@@ -58,8 +58,7 @@ const deepCopy = (arr) => {
   return copy;
 }
 
-// Plan Path for mazerunner
-function planPath(data, mazeWidth, mazeHeight, mazeCell) {
+function mazeMap(data, mazeWidth, mazeHeight, mazeCell) {
   // convert data to actual size maze map
   const imgWidth = mazeWidth * mazeCell;
   const imgHeight = mazeHeight * mazeCell;
@@ -73,6 +72,11 @@ function planPath(data, mazeWidth, mazeHeight, mazeCell) {
     }
   }
   //console.log(mat);
+  return mat;
+}
+
+// Plan Path for mazerunner
+function planPath(mat, mazeWidth, mazeHeight, mazeCell) {
   
   // find a suitable hole in first row and look for a suitable target position
   let source = [0,1];
@@ -90,4 +94,49 @@ function planPath(data, mazeWidth, mazeHeight, mazeCell) {
   
   // No path for this maze
   return -1;
+}
+
+// randomly generate suitable tablo positions in the maze
+function tabloPositions(mat, mazeWidth, mazeHeight, numTablos) {
+  // get list of wall positions
+  const Pos = [];
+  for (let x=0; x < mazeWidth; x += 1 ) {
+    for (let y=0; y < mazeHeight; y += 1) {
+      if (mat[x][y]===1)
+        Pos.push([x,y])
+    }
+  }
+
+  // generate candidates
+  let numTrial = 0;
+  const Res = [];
+  while (Res.length < numTablos && numTrial < Pos.length) {
+    let pos = Pos[ Math.floor(Math.random() * Pos.length) ];
+    let direction = [
+      [pos[0] + 1, pos[1]],
+      [pos[0], pos[1] + 1],
+      [pos[0] - 1, pos[1]],
+      [pos[0], pos[1] - 1]
+    ];
+    // shuffle neighbors to avoid axis order bias
+    const shuffled = direction.sort(() => Math.random() - 0.5)
+    // check if candidate is suitable: it has a visible wall
+    for (let i = 0; i < direction.length; i++) {
+      // discard borders
+      if (direction[i][0] < 0 || direction[i][0] >= mat.length 
+          || direction[i][1] < 0 || direction[i][1] >= mat[0].length ) { 
+        continue;
+      }
+      // is neighbor a way
+      if ( mat[direction[i][0]][direction[i][1]] === 0) {
+        Res.push( [ pos[0], pos[1], direction[i][0], direction[i][1] ] );
+        break;
+      }   
+    }    
+    numTrial += 1;
+  }
+  //console.log(Res);
+  
+  // No path for this maze
+  return Res;
 }
