@@ -121,7 +121,7 @@
         '/static/tablo/tablo_dertmend.png',
         '/static/tablo/tablo_hemdert.png',
         '/static/tablo/tablo_minnettar.png',
-        '/static/tablo/tablo_ilanihaye',
+        '/static/tablo/tablo_ilanihaye.png',
         '/static/tablo/tablo_bibaht.png'
       ]
       
@@ -189,7 +189,7 @@
           const mat = mazeMap(data, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
           Path = planPath(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
           console.log(Path);
-          TabloPos = tabloPositions(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, 10);
+          TabloPos = tabloPositions(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, Tablos.length);
           // Start graphics world
           init();
           animate();
@@ -347,9 +347,6 @@
 				const floor = new THREE.Mesh( floorGeometry, floorMaterial );
 				scene.add( floor );
 
-        //const axesHelper = new THREE.AxesHelper( 5 );
-        // axesHelper.position.y = 10;
-        //scene.add( axesHelper );
         
         //////////////////////////////////////////////////////////////////
 				// Create maze with cube objects
@@ -363,6 +360,9 @@
           if (data[i] === 1) {
             const x = i % mazeWidth, z = ( i / mazeWidth ) | 0;
   					const boxMaterial = new THREE.MeshPhongMaterial( { map: boxTexture } );
+            //boxMaterial.transparent = true;
+            //boxMaterial.opacity = 0.1;
+            
   					const box = new THREE.Mesh( boxGeometry, boxMaterial );
   					box.position.x = x*mazeView; //Math.floor( Math.random() * 20 - 10 ) * 20;
   					box.position.y = 0; //Math.floor( Math.random() * 20 ) * 20 + 10;
@@ -374,20 +374,20 @@
 
         // Tablolar as hints
         for (let t=0; t<TabloPos.length; t++) {
-          let box1 = new THREE.BoxGeometry( 15, 10, 1);
-          //box1.rotateY( - Math.PI / 2 );
+          let box1 = new THREE.BoxGeometry( 12, 9, 1);
+          //box1.rotateY( Math.PI / 2 );
           let text1 = new THREE.TextureLoader().load( Tablos[t] );
           let mat1 = new THREE.MeshBasicMaterial( {map: text1} );
           let tablo1 = new THREE.Mesh( box1, mat1 );
-          const x1 = TabloPos[t][0]*mazeCell*mazeView;
-          const z1 = TabloPos[t][1]*mazeCell*mazeView;
-          const x2 = TabloPos[t][2]*mazeCell*mazeView;
-          const z2 = TabloPos[t][3]*mazeCell*mazeView;
+          const x1 = (TabloPos[t][0])*mazeCell*mazeView;
+          const z1 = (TabloPos[t][1])*mazeCell*mazeView;
+          const x2 = (TabloPos[t][2])*mazeCell*mazeView;
+          const z2 = (TabloPos[t][3])*mazeCell*mazeView;
           // place with an extrusion
-          tablo1.position.x = x1 + Math.floor((x2-x1)/2);
-          tablo1.position.y = 50;
-          tablo1.position.z = z1 + Math.floor((z2-z1)/2);
-          tablo1.lookAt( x2, 10, z2 );
+          tablo1.position.x = x1 //+ Math.floor( (x2-x1)/mazeCell );
+          tablo1.position.y = 20;
+          tablo1.position.z = z1 //+ Math.floor( (z2-z1)/mazeCell );
+          tablo1.lookAt( x2, 20, z2 );
           console.log(tablo1.position.x, tablo1.position.z, x1, z1, x2, z2);
           scene.add(tablo1);
         }

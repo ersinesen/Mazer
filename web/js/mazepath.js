@@ -97,7 +97,52 @@ function planPath(mat, mazeWidth, mazeHeight, mazeCell) {
 }
 
 // randomly generate suitable tablo positions in the maze
+//Couldnot put on walls: hang them above road
 function tabloPositions(mat, mazeWidth, mazeHeight, numTablos) {
+  // get list of wall positions
+  const Pos = [];
+  for (let x=0; x < mazeWidth; x += 1 ) {
+    for (let y=0; y < mazeHeight; y += 1) {
+      if (mat[x][y]===0)
+        Pos.push([x,y])
+    }
+  }
+
+  // generate candidates
+  let numTrial = 0;
+  const Res = [];
+  while (Res.length < numTablos && numTrial < Pos.length) {
+    let pos = Pos[ Math.floor(Math.random() * Pos.length) ];
+    let direction = [
+      [pos[0] + 1, pos[1]],
+      [pos[0], pos[1] + 1],
+      [pos[0] - 1, pos[1]],
+      [pos[0], pos[1] - 1]
+    ];
+    // shuffle neighbors to avoid axis order bias
+    const shuffled = direction.sort(() => Math.random() - 0.5)
+    // check if candidate is suitable: it has a visible wall
+    for (let i = 0; i < shuffled.length; i++) {
+      // discard borders
+      if (shuffled[i][0] < 0 || shuffled[i][0] >= mat.length 
+          || shuffled[i][1] < 0 || shuffled[i][1] >= mat[0].length ) { 
+        continue;
+      }
+      // is neighbor a way
+      if ( mat[shuffled[i][0]][shuffled[i][1]] === 0) {
+        Res.push( [ pos[0], pos[1], shuffled[i][0], shuffled[i][1] ] );
+        break;
+      }   
+    }    
+    numTrial += 1;
+  }
+  console.log(Res);
+  
+  // No path for this maze
+  return Res;
+}
+
+function tabloPositionsWall(mat, mazeWidth, mazeHeight, numTablos) {
   // get list of wall positions
   const Pos = [];
   for (let x=0; x < mazeWidth; x += 1 ) {
@@ -121,21 +166,21 @@ function tabloPositions(mat, mazeWidth, mazeHeight, numTablos) {
     // shuffle neighbors to avoid axis order bias
     const shuffled = direction.sort(() => Math.random() - 0.5)
     // check if candidate is suitable: it has a visible wall
-    for (let i = 0; i < direction.length; i++) {
+    for (let i = 0; i < shuffled.length; i++) {
       // discard borders
-      if (direction[i][0] < 0 || direction[i][0] >= mat.length 
-          || direction[i][1] < 0 || direction[i][1] >= mat[0].length ) { 
+      if (shuffled[i][0] < 0 || shuffled[i][0] >= mat.length 
+          || shuffled[i][1] < 0 || shuffled[i][1] >= mat[0].length ) { 
         continue;
       }
       // is neighbor a way
-      if ( mat[direction[i][0]][direction[i][1]] === 0) {
-        Res.push( [ pos[0], pos[1], direction[i][0], direction[i][1] ] );
+      if ( mat[shuffled[i][0]][shuffled[i][1]] === 0) {
+        Res.push( [ pos[0], pos[1], shuffled[i][0], shuffled[i][1] ] );
         break;
       }   
     }    
     numTrial += 1;
   }
-  //console.log(Res);
+  console.log(Res);
   
   // No path for this maze
   return Res;
