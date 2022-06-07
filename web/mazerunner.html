@@ -27,6 +27,7 @@
 				cursor: pointer;
 			}
 		</style>
+    <script src="/js/mazepath.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.min.js"></script>
 	</head>
 	<body>
@@ -93,6 +94,9 @@
 			const direction = new THREE.Vector3();
 			const vertex = new THREE.Vector3();
 			const color = new THREE.Color();
+
+      // THe path in maze
+      let Path;
       
       // clock counter
       let counter = 0;
@@ -153,6 +157,8 @@
             else
               data[i] = 0;
           }
+          Path = planPath(data, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
+          console.log(Path);
           init();
           animate();
         },
@@ -240,7 +246,6 @@
 						case 'KeyA':
 							moveLeft = true;
               fadeToAction("Walking", 0.5);
-
 							break;
 						case 'ArrowDown':
 						case 'KeyS':
@@ -290,7 +295,7 @@
 				raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
 
 				// floor
-				let floorGeometry = new THREE.PlaneGeometry( 1000, 1000, 100, 100 );
+				let floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 100, 100 );
 				floorGeometry.rotateX( - Math.PI / 2 );
         const floorTexture = new THREE.TextureLoader().load( '/static/seranit_agatha.jpg' );
 				floorTexture.magFilter = THREE.NearestFilter;
@@ -308,7 +313,8 @@
         
         //////////////////////////////////////////////////////////////////
 				// Create maze with cube objects
-				const boxGeometry = new THREE.BoxGeometry( mazeCell, 40, mazeCell).toNonIndexed();
+        const mazeView = 2*mazeCell;
+				const boxGeometry = new THREE.BoxGeometry( mazeView, 40, mazeView).toNonIndexed();
 				position = boxGeometry.attributes.position;
 				
         const boxTexture = new THREE.TextureLoader().load( '/static/seranit_agatha.jpg' );
@@ -318,9 +324,9 @@
             const x = i % mazeWidth, z = ( i / mazeWidth ) | 0;
   					const boxMaterial = new THREE.MeshPhongMaterial( { map: boxTexture } );
   					const box = new THREE.Mesh( boxGeometry, boxMaterial );
-  					box.position.x = x*mazeCell; //Math.floor( Math.random() * 20 - 10 ) * 20;
+  					box.position.x = x*mazeView; //Math.floor( Math.random() * 20 - 10 ) * 20;
   					box.position.y = 0; //Math.floor( Math.random() * 20 ) * 20 + 10;
-  					box.position.z = z*mazeCell; //Math.floor( Math.random() * 20 - 10 ) * 20;
+  					box.position.z = z*mazeView; //Math.floor( Math.random() * 20 - 10 ) * 20;
   					scene.add( box );
   					objects.push( box );
           }
@@ -336,6 +342,23 @@
         tablo1.position.y = 5;
         tablo1.position.z = 20;
         //scene.add(tablo1);
+
+        // Place target at path's end
+        if (Path != 1) {
+          const geometryTarget = new THREE.SphereGeometry( 15, 32, 16 );
+          const materialTarget = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+          const sphereTarget = new THREE.Mesh( geometryTarget, materialTarget );
+          // mazeWidth includes mazeCell here, so append it
+          sphereTarget.position.x = Path[0][0]*mazeView*mazeCell;
+          sphereTarget.position.z = Path[0][1]*mazeView*mazeCell;
+          sphereTarget.position.y = 10;
+          scene.add( sphereTarget );
+          const sphereTarget2 = sphereTarget.clone();
+          sphereTarget2.position.x = Path[1][0]*mazeView*mazeCell;
+          sphereTarget2.position.z = Path[1][1]*mazeView*mazeCell;
+          sphereTarget2.position.y = 10;
+          scene.add( sphereTarget2 );
+        }
       
 				//
 				renderer = new THREE.WebGLRenderer( { antialias: true } );

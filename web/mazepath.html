@@ -38,7 +38,8 @@
       function Process() {
         const data = [];
         const dataimg = ctx.getImageData( 0, 0, imgWidth, imgHeight);
-         for ( let i = 0; i < size; i++ ) {          const R = dataimg.data[4*i];
+        for ( let i = 0; i < size; i++ ) {          
+          const R = dataimg.data[4*i];
           const G = dataimg.data[4*i+1];
           const B = dataimg.data[4*i+2];
           const Gray = (R+G+B) / 3;
@@ -50,21 +51,23 @@
         }
   
         // downsample to obtain final mat
-        let mat = Array.from(Array(mazeHeight), () => new Array(mazeWidth));
-        for (let y=0; y < mazeHeight; y += 1 ) {
-          for (let x=0; x < mazeWidth; x += 1) {
-            const ind = x*mazeCell + y*imgWidth*mazeCell;
-            mat[y][x] = data[ind];
+        let mat = Array.from(Array(mazeWidth), () => new Array(mazeHeight));
+        for (let x=0; x < mazeWidth; x += 1 ) {
+          for (let y=0; y < mazeHeight; y += 1) {
+            // read from inner block to avoid boundary artifacts when enlarged
+            const ind = mazeCell*(x+1/2) + imgWidth*mazeCell*(y+1/2);
+            mat[x][y] = data[ind];
+            //console.log(x, y, ind, data[ind]);
           }
         }
         //console.log(mat);
         
         // Find path
-        let source = [0,19];
-        let dest = [19, 0];
+        let source = [0,1]//[7, 6];
+        let dest = [9, 9]//[11, 19];
 
         let mat2 = deepCopy(mat);
-        let path = findWay(mat2, source, dest)
+        let path = findWay(mat2, source, dest);
         if (path!=-1)
           console.log("Shortest Path is", path,"</br>");
         else {
@@ -84,7 +87,7 @@
         // Paint a cell on image
         function PaintCell(x, y, mazeCell, col="red") {
           ctx.beginPath();
-          ctx.rect(x*mazeCell+1, y*mazeCell+1, mazeCell-2, mazeCell-2);
+          ctx.rect(x*mazeCell+2, y*mazeCell+2, mazeCell-4, mazeCell-4);
           ctx.fillStyle = col;
           ctx.fill();
           ctx.lineWidth = 0;
