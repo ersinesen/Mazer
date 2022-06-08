@@ -76,12 +76,14 @@
 		  import { GLTFLoader } from '/jsm/loaders/GLTFLoader.js';
       import { Sky } from '/jsm/objects/Sky.js';
 
-			let camera, scene, renderer, controls, clock, sky;
+			let camera, scene, renderer, controls, clock, sky, sun;
       let stats, model,face, gui, mixer, actions, activeAction, previousAction;
 	  	const api = { state: 'Idle' };
 
 			const objects = [];
-
+      let targetObject, initialObject;
+      let targetFound = false;
+      let initialFound = false;
 			let raycaster;
 
 			let moveForward = false;
@@ -188,7 +190,7 @@
           // Maze stuff
           const mat = mazeMap(data, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
           Path = planPath(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
-          console.log(Path);
+          //console.log(Path);
           TabloPos = tabloPositions(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, Tablos.length);
           // Start graphics world
           init();
@@ -215,10 +217,20 @@
 				scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
 
         // Sky
-        sky = new Sky();
+        /*sky = new Sky();
 				sky.scale.setScalar( 450000 );
 				scene.add( sky );
-        
+        sun = new THREE.Vector3();
+        const uniforms = sky.material.uniforms;
+        uniforms[ 'turbidity' ].value = 10;
+        uniforms[ 'rayleigh' ].value = 3;
+        uniforms[ 'mieCoefficient' ].value = 0.05;
+        uniforms[ 'mieDirectionalG' ].value = 0.7;
+        const phi = THREE.MathUtils.degToRad( 0  );
+        const theta = THREE.MathUtils.degToRad( 180 );
+        sun.setFromSphericalCoords( 1, phi, theta );
+        uniforms[ 'sunPosition' ].value.copy( sun );*/
+      
         // Lights
 				const light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
 				light.position.set( 0.5, 1, 0.75 );
@@ -243,7 +255,6 @@
           console.error( e );
         } );
 
-       
         // Controls
 				controls = new PointerLockControls( camera, document.body );
         // avoid vertical rotate
@@ -344,7 +355,7 @@
 				let position = floorGeometry.attributes.position;
 				floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
 				const floorMaterial = new THREE.MeshPhongMaterial({map: floorTexture});
-				const floor = new THREE.Mesh( floorGeometry, floorMaterial );
+        const floor = new THREE.Mesh( floorGeometry, floorMaterial );
 				scene.add( floor );
 
         
@@ -388,26 +399,28 @@
           tablo1.position.y = 20;
           tablo1.position.z = z1 //+ Math.floor( (z2-z1)/mazeCell );
           tablo1.lookAt( x2, 20, z2 );
-          console.log(tablo1.position.x, tablo1.position.z, x1, z1, x2, z2);
+          //console.log(tablo1.position.x, tablo1.position.z, x1, z1, x2, z2);
           scene.add(tablo1);
         }
-        console.log(TabloPos);
+        //console.log(TabloPos);
 
         // Place target at path's end
         if (Path != 1) {
-          const geometryTarget = new THREE.SphereGeometry( 15, 32, 16 );
+          const geometryTarget = new THREE.SphereGeometry( 4 );
           const materialTarget = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-          const sphereTarget = new THREE.Mesh( geometryTarget, materialTarget );
+          materialTarget.transparent = true;
+          materialTarget.opacity = 0.7;
+          initialObject = new THREE.Mesh( geometryTarget, materialTarget );
           // mazeWidth includes mazeCell here, so append it
-          sphereTarget.position.x = Path[0][0]*mazeView*mazeCell;
-          sphereTarget.position.z = Path[0][1]*mazeView*mazeCell;
-          sphereTarget.position.y = 10;
-          scene.add( sphereTarget );
-          const sphereTarget2 = sphereTarget.clone();
-          sphereTarget2.position.x = Path[1][0]*mazeView*mazeCell;
-          sphereTarget2.position.z = Path[1][1]*mazeView*mazeCell;
-          sphereTarget2.position.y = 10;
-          scene.add( sphereTarget2 );
+          initialObject.position.x = Path[0][0]*mazeView*mazeCell;
+          initialObject.position.z = Path[0][1]*mazeView*mazeCell;
+          initialObject.position.y = 4;
+          //scene.add( initialObject );
+          targetObject = initialObject.clone();
+          targetObject.position.x = Path[1][0]*mazeView*mazeCell;
+          targetObject.position.z = Path[1][1]*mazeView*mazeCell;
+          targetObject.position.y = 4;
+          scene.add( targetObject );
         }
       
 				//
@@ -517,6 +530,24 @@
 					const intersections = raycaster.intersectObjects( objects, false );
 					const hitObject = intersections.length > 0;
           //console.log(hitObject);
+
+          // Check if we hit target
+          const targetIntersect = raycaster.intersectObject( targetObject, false );
+          if ( targetIntersect.length > 0) {
+            console.log("Target found. Return back to start position.");
+            targetFound = 1;
+            scene.remove(targetObject);
+            scene.add(initialObject);
+          }
+          if (targetFound && !initialFound) {
+            const initialIntersect = raycaster.intersectObject( initialObject, false );
+            if ( initialIntersect.length > 0) {
+              initialFound = 1;
+              scene.remove(initialObject);
+              console.log("Mission accomplished.");
+              alert("Mission accomplished. Refresh page to replay.");
+            }
+          }
           
 					const delta = ( time - prevTime ) / 1000;
 

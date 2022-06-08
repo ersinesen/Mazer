@@ -4,6 +4,10 @@ const app = express();
 const port = 3000;
 //const { exec } = require("child_process");
 import {exec} from 'child_process';
+import showdown from 'showdown';
+import fs from 'fs';
+
+showdown.setFlavor('github');
 
 app.use('/static', express.static('static'))
 app.use('/js', express.static('js'))
@@ -13,7 +17,19 @@ app.use('/css', express.static('css'))
 
 
 app.get('/', (req, res) => {
-  res.sendFile('/home/runner/Mazer/web/index.html')
+  //res.sendFile('/home/runner/Mazer/web/README.md')
+  let converter = new showdown.Converter({completeHTMLDocument: true, flavor: 'github'});      
+  //converter.setFlavor('github');
+  
+  try {
+    const data = fs.readFileSync('/home/runner/Mazer/README.md', 'utf8');
+    const html = converter.makeHtml(data);
+    res.send(html);
+  } catch (err) {
+    console.error(err);
+    res.send('ERROR')
+  }
+  
 })
 
 app.get('/maze', (req, res) => {

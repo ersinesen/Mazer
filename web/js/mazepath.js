@@ -136,7 +136,7 @@ function tabloPositions(mat, mazeWidth, mazeHeight, numTablos) {
     }    
     numTrial += 1;
   }
-  console.log(Res);
+  //console.log(Res);
   
   // No path for this maze
   return Res;
@@ -180,7 +180,7 @@ function tabloPositionsWall(mat, mazeWidth, mazeHeight, numTablos) {
     }    
     numTrial += 1;
   }
-  console.log(Res);
+  //console.log(Res);
   
   // No path for this maze
   return Res;
