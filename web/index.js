@@ -33,7 +33,15 @@ app.get('/', (req, res) => {
 })
 
 app.get('/maze', (req, res) => {
-  const command = "dotnet run --configuration Release MarkovJunior.csproj";
+  // get parameters
+  let W = parseInt(req.query.width) ? req.query.width : 10;
+  let H = parseInt(req.query.height) ? req.query.height: 10;
+  // hard limit
+  W = W>100 ? 100 : W;
+  H = H>100 ? 100 : H;
+  
+  //console.log(W, H);
+  const command = "dotnet run --configuration Release MarkovJunior.csproj " + Math.ceil(W/2) + " " + Math.ceil(H/2);
   const workdir = "/home/runner/Mazer/web/MarkovJunior";
   exec(command , {cwd: workdir},
     (error, stdout, stderr) => {

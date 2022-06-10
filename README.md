@@ -13,18 +13,22 @@ node index.js
 
 # Maze Generation
 
-Random maze is generated using a brilliant probablistic programming language [MarkovJunior](https://github.com/mxgmn/MarkovJunior) by [Maxim Gumin](https://github.com/mxgmn).
-
-Used another branch to get rid of System.Drawing incompatibility in net6:
+Random maze is generated using a brilliant probablistic programming language [MarkovJunior](https://github.com/mxgmn/MarkovJunior) by [Maxim Gumin](https://github.com/mxgmn). Used another branch to get rid of System.Drawing incompatibility in net6:
 
 ```
 git clone --branch replace-System.Drawing-with-SixLabors.ImageSharp https://github.com/ahouts/MarkovJunior.git
 ```
 
-To generate a random 20x20 maze visit the [URL](https://mazer.ersinesen.repl.co/maze) or 
+To generate a random maze visit the [URL](https://mazer.ersinesen.repl.co/maze) or 
 
 ```
 curl https://mazer.ersinesen.repl.co/maze --output maze.png
+```
+
+You can also specify the dimensions (max=100, default=20): [50x50](https://mazer.ersinesen.repl.co/maze?width=50&height=50)
+
+```
+curl https://mazer.ersinesen.repl.co/maze?width=50&height=50 --output maze50.png
 ```
 
 ![A random maze](https://mazer.ersinesen.repl.co/static/maze.png)
