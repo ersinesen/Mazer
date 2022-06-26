@@ -63,14 +63,6 @@ app.get('/maze', (req, res) => {
   });
 })
 
-app.get('/maze3D', (req, res) => {
-  res.sendFile('/home/runner/Mazer/web/maze3D.html')
-})
-
-app.get('/ammo', (req, res) => {
-  res.sendFile('/home/runner/Mazer/web/ammo.html')
-})
-
 app.get('/mazerunner', (req, res) => {
   res.sendFile('/home/runner/Mazer/web/mazerunner.html')
 })

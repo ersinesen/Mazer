@@ -45,6 +45,8 @@
 				<p>
 					Move: Arrows|WASD<br/>
 					Look: MOUSE<br/>
+          Mute music: M<br/>
+          Change song: C<br/>
           Pause: ESC<br/>
           <br/>
           Aim: Find the target hidden in the maze and return to starting point as soon as possible.<br/>
@@ -54,6 +56,12 @@
 		</div>
 
 
+  <audio id="audio" autoplay loop muted>
+    <source src="/static/hepsi_buymus.mp3" type="audio/mpeg">
+    
+    Your browser does not support the audio element.
+  </audio> 
+    
 		<!-- Import maps polyfill -->
 		<!-- Remove this when import maps will be widely supported -->
 		<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
@@ -125,7 +133,17 @@
         '/static/tablo/tablo_minnettar.png',
         '/static/tablo/tablo_ilanihaye.png',
         '/static/tablo/tablo_bibaht.png'
-      ]
+      ];
+
+      // Songs
+      const Songs = [
+        '/static/hepsi_buymus.mp3',
+        '/static/dost.mp3',
+        '/static/piano1.mp3',
+        '/static/piano2.mp3',
+        '/static/piano3.mp3'
+      ];
+      let song_index = 0;
       
       // clock counter
       let counter = 0;
@@ -264,10 +282,11 @@
         controls.getObject().position.x = -100;
         controls.getObject().position.z = 20;
         controls.getObject().lookAt(0,20,0);
-      
+
+        // Game state: locked or unlocked
 				const blocker = document.getElementById( 'blocker' );
 				const instructions = document.getElementById( 'instructions' );
-
+        const audio_player = document.getElementById( 'audio' );
 				instructions.addEventListener( 'click', function () {
 					controls.lock();
 				} );
@@ -276,12 +295,15 @@
 					instructions.style.display = 'none';
 					blocker.style.display = 'none';
           deltacounter = 1;
+          audio_player.muted = false;
 				} );
 
 				controls.addEventListener( 'unlock', function () {
 					blocker.style.display = 'block';
 					instructions.style.display = '';
           deltacounter = 0;
+          audio_player.muted = true;
+
 				} );
 
 				scene.add( controls.getObject() );
@@ -312,6 +334,21 @@
 							if ( canJump === true ) velocity.y += 350;
 							canJump = false;
 							break;
+            case 'KeyM':
+              const audio_playerM = document.getElementById( 'audio' );
+              audio_playerM.muted = !audio_playerM.muted;
+              break;
+            case 'KeyC':
+              const audio_playerC = document.getElementById( 'audio' );
+              song_index += 1;
+              if (song_index >= Songs.length)
+                song_index = 0;
+              audio_playerC.src = Songs[song_index];
+              audio_playerC.pause();
+              audio_playerC.load();
+              audio_playerC.play();
+              break;
+
 					}
 				};
 
