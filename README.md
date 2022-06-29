@@ -33,7 +33,7 @@ curl https://mazer.ersinesen.repl.co/maze?width=50&height=50 --output maze50.png
 
 ![A random maze](https://mazer.ersinesen.repl.co/static/maze.png)
 
-[A sample to find the shortest path between two points in the maz](https://mazer.ersinesen.repl.co/mazepath)
+[A sample to find the shortest path between two points in the maze.](https://mazer.ersinesen.repl.co/mazepath)
 
 # Mazerunner Game
 
@@ -45,7 +45,9 @@ Aim: Find the red SPICY hidden in the maze and return to starting point as soon 
 
 You can make use of the signs on the walls to remember the path you traversed.
 
-## Game Music
+You can also play with a [random maze](https://mazer.ersinesen.repl.co/mazerunner/random).
+
+### Game Music
 
 1. A snippet of [Kumarbaz by Temoan](https://www.youtube.com/watch?v=iSy7OBSE8ls)
 

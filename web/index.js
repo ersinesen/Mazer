@@ -24,7 +24,8 @@ app.get('/', (req, res) => {
   
   try {
     const data = fs.readFileSync('/home/runner/Mazer/README.md', 'utf8');
-    const html = converter.makeHtml(data);
+    let html = converter.makeHtml(data);
+    html = html.replace('<head>', '<head>\n<title>Mazer</title>\n<link rel="icon" type="image/x-icon" href="/static/mazerunner_favicon.png">');
     res.send(html);
   } catch (err) {
     console.error(err);
