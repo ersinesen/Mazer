@@ -53,11 +53,11 @@ You can also play with a [random maze](https://mazer.ersinesen.repl.co/mazerunne
 
 2. Intro of [Dostun Gül Cemali by Muharrem Temiz](https://www.youtube.com/watch?v=mC7TbkG5QKE)
   
-3. (Original Score) Mazerunner Piano Snippet #1 by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
+3. (Original Score) [Mazerunner Piano Snippet #1](https://youtube.com/shorts/wCJX9S1TGc4) by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
 
-4. (Original Score) Mazerunner Piano Snippet #2 by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
+4. (Original Score) [Mazerunner Piano Snippet #2](https://youtube.com/shorts/Y4bmPWB55_s) by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
 
-5. (Original Score) Mazerunner Piano Snippet #3 by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
+5. (Original Score) [Mazerunner Piano Snippet #3](https://youtu.be/7MCz6sf7doc) by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
 
 
  

@@ -1,5 +1,5 @@
-run = "dotnet run"
-entrypoint = "main.cs"
+run = "cd web; node index.js"
+#entrypoint = "main.cs"
 
 hidden = ["bin", "obj"]
 
