@@ -75,10 +75,10 @@ function mazeMap(data, mazeWidth, mazeHeight, mazeCell) {
   return mat;
 }
 
-// Plan Path for mazerunner
+// Plan Path for mazerunner: for fixed maze
 function planPath(mat, mazeWidth, mazeHeight, mazeCell) {
   
-  // find a suitable hole in first row and look for a suitable target position
+  // fix start end points
   let source = [0,1];
   let dest = [[9,9]];
 
@@ -88,6 +88,40 @@ function planPath(mat, mazeWidth, mazeHeight, mazeCell) {
     //console.log(path);
     if (path!=-1)
       return [source, dest[i]];
+    else 
+      continue;
+  }
+  
+  // No path for this maze
+  return -1;
+}
+
+// Plan Path for mazerunner: for fixed maze
+function planPathRandom(mat, mazeWidth, mazeHeight, mazeCell) {
+  
+  // Find a suitable hole in first row
+  let source = [0,0];
+  for (let s=0; s<mazeHeight; s++) {
+    //console.log(mat[0][s]);
+    if (mat[0][s]===0) {
+      source = [0,s];
+      break;
+    }
+  }
+  //console.log(source);
+  
+  // Look for a suitable target position
+  for (let trial=0; trial<10; trial++) {
+    
+    let x = Math.floor( Math.random() * mazeWidth/2)  + Math.floor(mazeWidth/2);
+    let y = Math.floor( Math.random() * mazeHeight);
+    //console.log(x,y);
+    
+    let mat2 = deepCopy(mat);
+    let path = findWay(mat2, source, [x,y]);
+    //console.log(path);
+    if (path!=-1)
+      return [source, [x,y]];
     else 
       continue;
   }

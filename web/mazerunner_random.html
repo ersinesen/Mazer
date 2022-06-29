@@ -178,13 +178,26 @@
           return (zero + num).slice(-digit);
       }
       
-      // Read the maze from png (80x80 as the world)
+      // Random maze by calling /mazeurl that returns the URL of a new random maze
       const mazeWidth = 80, mazeDepth = 80, size=mazeWidth*mazeDepth, mazeCell=4;
       const data = [];
+      let mazeFilename;
+
+      let response = await fetch("/mazeurl");
+
+      if (response.ok) { // if HTTP-status is 200-299
+        let res = await response.text();
+        mazeFilename = res.replace("/home/runner/Mazer/web/MarkovJunior/output", "/mazestore");
+        console.log(mazeFilename);
+      } else {
+        console.log("HTTP-Error: " + response.status);
+        mazeFilename = "/static/maze.png";
+      }
+            
       const loader = new THREE.ImageLoader();
       // load a image resource
       loader.load(
-        '/static/maze.png',
+        mazeFilename,
         // onLoad callback
         function ( image ) {
           const canvas = document.createElement( 'canvas' );
@@ -207,7 +220,7 @@
 
           // Maze stuff
           const mat = mazeMap(data, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
-          Path = planPath(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
+          Path = planPathRandom(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, mazeCell);
           //console.log(Path);
           TabloPos = tabloPositions(mat, mazeWidth/mazeCell, mazeDepth/mazeCell, Tablos.length);
           // Start graphics world

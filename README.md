@@ -41,11 +41,21 @@ curl https://mazer.ersinesen.repl.co/maze?width=50&height=50 --output maze50.png
 
 A Three.js based first person runner game to test your memory.
 
-Aim: Find the red sphere hidden in the maze and return to starting point as soon as possible. 
+Aim: Find the red SPICY hidden in the maze and return to starting point as soon as possible. 
 
 You can make use of the signs on the walls to remember the path you traversed.
 
+## Game Music
 
+1. A snippet of [Kumarbaz by Temoan](https://www.youtube.com/watch?v=iSy7OBSE8ls)
+
+2. Intro of [Dostun Gül Cemali by Muharrem Temiz](https://www.youtube.com/watch?v=mC7TbkG5QKE)
+  
+3. (Original Score) Mazerunner Piano Snippet #1 by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
+
+4. (Original Score) Mazerunner Piano Snippet #2 by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
+
+5. (Original Score) Mazerunner Piano Snippet #3 by Ersin Esen with [magenta piano tranformer](https://magenta.tensorflow.org/piano-transformer)
 
 
  
